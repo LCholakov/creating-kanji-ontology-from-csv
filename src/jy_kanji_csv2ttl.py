@@ -6,7 +6,8 @@ from rdflib.namespace import XSD
 JK  = Namespace("https://example.org/joyokanji#")
 
 def unicode_uri(ch: str):
-    return JK[f"kanji_U{ord(ch):04X}"] 
+    # return JK[f"kanji_U{ord(ch):04X}"] 
+    return JK[f"U{ord(ch):04X}"] 
 
 def normalize_cell(val):
     return (val or "").strip()
@@ -26,13 +27,35 @@ graph.add((Radical, RDF.type, OWL.Class))
 
 # properties
 hasOldForm = JK.hasOldForm
-graph.add((hasOldForm, RDF.type, OWL.DatatypeProperty))
-
 stroke_count = JK.strokeCount
-graph.add((stroke_count, RDF.type, OWL.DatatypeProperty))
-
 yearAdded = JK.yearAdded
-graph.add((yearAdded, RDF.type, OWL.DatatypeProperty))
+hasRadical = JK.hasRadical
+
+# graph.add((hasOldForm, RDF.type, OWL.DatatypeProperty))
+# graph.add((stroke_count, RDF.type, OWL.DatatypeProperty))
+# graph.add((yearAdded, RDF.type, OWL.DatatypeProperty))
+# graph.add((hasRadical, RDF.type, OWL.DatatypeProperty))
+
+# first load radicals and build a local dict to match radicals from kanji dataset to specific entity in radicals dataset
+radical_uri_by_char = {}
+with open("data/kanji_radicals.csv", newline="", encoding="utf-8") as f:
+    reader = csv.DictReader(f)
+    for i, row in enumerate(reader):
+        if i >= 15:
+            break
+        
+        radical_char = normalize_cell(row.get("radical"))
+        if not radical_char:
+            continue
+        
+        instance = unicode_uri(radical_char)
+        radical_uri_by_char[radical_char] = instance
+        graph.add((instance, RDF.type, Radical))
+        graph.add((instance, RDFS.label, Literal(radical_char)))
+
+        strokes = (row.get("stroke_count") or "").strip()
+        if strokes:
+            graph.add((instance, stroke_count, Literal(int(strokes), datatype=XSD.integer)))
 
 
 # convert kanji character data from input dataset joyo_kanji.csv
@@ -63,23 +86,14 @@ with open("data/joyo_kanji.csv", newline="", encoding="utf-8") as f:
         year = 1946 if year_raw == "" else int(year_raw)
         graph.add((instance, yearAdded, Literal(str(year), datatype=XSD.gYear)))
 
-with open("data/kanji_radicals.csv", newline="", encoding="utf-8") as f:
-    reader = csv.DictReader(f)
-    for i, row in enumerate(reader):
-        if i >= 5:
-            break
-        # using bushu, the jp term for radical, as var name, to avoid confusion with class Radical
-        bushu = normalize_cell(row.get("radical"))
-        if not bushu:
-            continue
-        
-        instance = unicode_uri(bushu)
-        graph.add((instance, RDF.type, Radical))
-        graph.add((instance, RDFS.label, Literal(bushu)))
+        # match radical from 
+        radical_char = normalize_cell(row.get("radical"))
+        if radical_char:
+            rad_uri = radical_uri_by_char.get(radical_char)
 
-        strokes = (row.get("stroke_count") or "").strip()
-        if strokes:
-            graph.add((instance, stroke_count, Literal(int(strokes), datatype=XSD.integer)))
+            if rad_uri:
+                graph.add((instance, hasRadical, rad_uri))
+
 
 
 graph.serialize("out/joyo_kanji.ttl", format="turtle")
