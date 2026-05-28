@@ -7,6 +7,7 @@ JK  = Namespace("https://example.org/joyokanji#")
 
 def unicode_uri(ch: str):
     # return JK[f"kanji_U{ord(ch):04X}"] 
+    # print(ch)
     return JK[f"U{ord(ch):04X}"] 
 
 def normalize_cell(val):
@@ -41,9 +42,6 @@ radical_uri_by_char = {}
 with open("data/kanji_radicals.csv", newline="", encoding="utf-8") as f:
     reader = csv.DictReader(f)
     for i, row in enumerate(reader):
-        if i >= 15:
-            break
-        
         radical_char = normalize_cell(row.get("radical"))
         if not radical_char:
             continue
@@ -62,7 +60,7 @@ with open("data/kanji_radicals.csv", newline="", encoding="utf-8") as f:
 with open("data/joyo_kanji.csv", newline="", encoding="utf-8") as f:
     reader = csv.DictReader(f)
     for i, row in enumerate(reader):
-        if i >= 5:
+        if i > 1000:
             break
         new_form = normalize_cell(row.get("new"))
         if not new_form:
@@ -89,11 +87,16 @@ with open("data/joyo_kanji.csv", newline="", encoding="utf-8") as f:
         # match radical from 
         radical_char = normalize_cell(row.get("radical"))
         if radical_char:
-            rad_uri = radical_uri_by_char.get(radical_char)
-
-            if rad_uri:
-                graph.add((instance, hasRadical, rad_uri))
-
+            radical_uri = radical_uri_by_char.get(radical_char)
+            if radical_uri is None:
+                # Add radicals that are not in the radicals dataset. 
+                # This is actually a TODO improvement, since some radicals are given in their variant forms.
+                # They need to be described additionally to match all variants to a single entity. 
+                radical_uri = unicode_uri(radical_char)
+                radical_uri_by_char[radical_char] = radical_uri
+                graph.add((radical_uri, RDF.type, Radical))
+                graph.add((radical_uri, RDFS.label, Literal(radical_char)))
+            graph.add((instance, hasRadical, radical_uri))
 
 
 graph.serialize("out/joyo_kanji.ttl", format="turtle")
