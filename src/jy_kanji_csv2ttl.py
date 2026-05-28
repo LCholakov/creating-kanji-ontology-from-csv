@@ -21,6 +21,7 @@ graph.bind("rdfs", RDFS)
 #classes
 KanjiCharacter = JK.KanjiCharacter
 Radical = JK.Radical
+Phonetic = JK.Phonetic
 GradeLevel = JK.GradeLevel # what year in school it's taught or S if it's in secondary (highschool).
 Reading = JK.Reading
 OnyomiReading = JK.OnYomiReading
@@ -28,6 +29,7 @@ KunyomiReading = JK.KunYomiReading
 
 graph.add((KanjiCharacter, RDF.type, OWL.Class))
 graph.add((Radical, RDF.type, OWL.Class))
+graph.add((Phonetic, RDF.type, OWL.Class))
 graph.add((GradeLevel, RDF.type, OWL.Class))
 graph.add((Reading, RDF.type, OWL.Class))
 graph.add((OnyomiReading, RDF.type, OWL.Class))
@@ -47,6 +49,7 @@ graph.add((yearAdded, RDF.type, OWL.DatatypeProperty))
 
 # object properties
 hasRadical = JK.hasRadical
+hasPhonetic = JK.hasPhonetic
 taughtInGrade = JK.taughtInGrade
 hasReading = JK.hasReading
 
