@@ -60,8 +60,8 @@ with open("data/kanji_radicals.csv", newline="", encoding="utf-8") as f:
 with open("data/joyo_kanji.csv", newline="", encoding="utf-8") as f:
     reader = csv.DictReader(f)
     for i, row in enumerate(reader):
-        if i > 1000:
-            break
+        # if i > 1000:
+        #     break
         new_form = normalize_cell(row.get("new"))
         if not new_form:
             continue
@@ -85,18 +85,22 @@ with open("data/joyo_kanji.csv", newline="", encoding="utf-8") as f:
         graph.add((instance, yearAdded, Literal(str(year), datatype=XSD.gYear)))
 
         # match radical from 
-        radical_char = normalize_cell(row.get("radical"))
-        if radical_char:
-            radical_uri = radical_uri_by_char.get(radical_char)
-            if radical_uri is None:
-                # Add radicals that are not in the radicals dataset. 
-                # This is actually a TODO improvement, since some radicals are given in their variant forms.
-                # They need to be described additionally to match all variants to a single entity. 
-                radical_uri = unicode_uri(radical_char)
-                radical_uri_by_char[radical_char] = radical_uri
-                graph.add((radical_uri, RDF.type, Radical))
-                graph.add((radical_uri, RDFS.label, Literal(radical_char)))
-            graph.add((instance, hasRadical, radical_uri))
+        # apparently at least one entry "1814,弁,辨瓣辯,辛瓜辛,5,5,,"
+        # has multiple values so need to accomodate that. And deal with duplicates in this netry.
+        radical_field = normalize_cell(row.get("radical"))
+        
+        if radical_field:
+            for radical_char in set(radical_field): 
+                radical_uri = radical_uri_by_char.get(radical_char)
+
+                if radical_uri is None:
+                    radical_uri = unicode_uri(radical_char)
+                    radical_uri_by_char[radical_char] = radical_uri
+
+                    graph.add((radical_uri, RDF.type, Radical))
+                    graph.add((radical_uri, RDFS.label, Literal(radical_char)))
+
+                graph.add((instance, hasRadical, radical_uri))
 
 
 graph.serialize("out/joyo_kanji.ttl", format="turtle")
