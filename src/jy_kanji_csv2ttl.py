@@ -22,10 +22,19 @@ graph.bind("rdfs", RDFS)
 KanjiCharacter = JK.KanjiCharacter
 Radical = JK.Radical
 GradeLevel = JK.GradeLevel # what year in school it's taught or S if it's in secondary (highschool).
+Reading = JK.Reading
+OnyomiReading = JK.OnYomiReading
+KunyomiReading = JK.KunYomiReading
 
 graph.add((KanjiCharacter, RDF.type, OWL.Class))
 graph.add((Radical, RDF.type, OWL.Class))
 graph.add((GradeLevel, RDF.type, OWL.Class))
+graph.add((Reading, RDF.type, OWL.Class))
+graph.add((OnyomiReading, RDF.type, OWL.Class))
+graph.add((OnyomiReading, RDFS.subClassOf, Reading))
+graph.add((KunyomiReading, RDF.type, OWL.Class))
+graph.add((KunyomiReading, RDFS.subClassOf, Reading))
+
 
 # datatype properties
 hasOldForm = JK.hasOldForm
@@ -39,8 +48,11 @@ graph.add((yearAdded, RDF.type, OWL.DatatypeProperty))
 # object properties
 hasRadical = JK.hasRadical
 taughtInGrade = JK.taughtInGrade
+hasReading = JK.hasReading
+
 graph.add((hasRadical, RDF.type, OWL.ObjectProperty))
 graph.add((taughtInGrade, RDF.type, OWL.ObjectProperty))
+graph.add((hasReading, RDF.type, OWL.ObjectProperty))
 
 # Make the grade level a separate class cuz it's not just a simple integer.
 grade_map = {}
