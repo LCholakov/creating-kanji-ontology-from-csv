@@ -57,6 +57,15 @@ graph.add((hasRadical, RDF.type, OWL.ObjectProperty))
 graph.add((taughtInGrade, RDF.type, OWL.ObjectProperty))
 graph.add((hasReading, RDF.type, OWL.ObjectProperty))
 
+
+# domains/ranges
+graph.add((JK.hasRadical, RDFS.domain, JK.KanjiCharacter))
+graph.add((JK.hasRadical, RDFS.range,  JK.Radical))
+
+graph.add((JK.taughtInGrade, RDFS.domain, JK.KanjiCharacter))
+graph.add((JK.taughtInGrade, RDFS.range,  JK.GradeLevel))
+
+
 # Make the grade level a separate class cuz it's not just a simple integer.
 grade_map = {}
 for i in range(1, 7):
