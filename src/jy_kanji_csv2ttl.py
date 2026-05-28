@@ -27,17 +27,20 @@ graph.add((KanjiCharacter, RDF.type, OWL.Class))
 graph.add((Radical, RDF.type, OWL.Class))
 graph.add((GradeLevel, RDF.type, OWL.Class))
 
-
-# properties
+# datatype properties
 hasOldForm = JK.hasOldForm
 stroke_count = JK.strokeCount
 yearAdded = JK.yearAdded
-hasRadical = JK.hasRadical
 
 graph.add((hasOldForm, RDF.type, OWL.DatatypeProperty))
 graph.add((stroke_count, RDF.type, OWL.DatatypeProperty))
 graph.add((yearAdded, RDF.type, OWL.DatatypeProperty))
-graph.add((hasRadical, RDF.type, OWL.DatatypeProperty))
+
+# object properties
+hasRadical = JK.hasRadical
+taughtInGrade = JK.taughtInGrade
+graph.add((hasRadical, RDF.type, OWL.ObjectProperty))
+graph.add((taughtInGrade, RDF.type, OWL.ObjectProperty))
 
 # Make the grade level a separate class cuz it's not just a simple integer.
 grade_map = {}
@@ -84,15 +87,17 @@ with open("data/joyo_kanji.csv", newline="", encoding="utf-8") as f:
         graph.add((instance, RDF.type, KanjiCharacter))
         graph.add((instance, RDFS.label, Literal(new_form)))
 
+        # old form of the kanji
         old_form = normalize_cell(row.get("old"))
         if old_form:
             graph.add((instance, hasOldForm, Literal(old_form)))
 
+        # stroke count
         strokes = (row.get("strokes") or "").strip()
         if strokes:
             graph.add((instance, stroke_count, Literal(int(strokes), datatype=XSD.integer)))
 
-        
+        # year kanji was added 
         year_raw = (row.get("year_added") or "").strip()
         # replace empty field with 1946 when the language reform was implemented
         year = 1946 if year_raw == "" else int(year_raw)
@@ -116,6 +121,10 @@ with open("data/joyo_kanji.csv", newline="", encoding="utf-8") as f:
 
                 graph.add((instance, hasRadical, radical_uri))
 
+        # grade when kanji is taught
+        grade_raw = normalize_cell(row.get("grade"))
+        if grade_raw in grade_map:
+            graph.add((instance, taughtInGrade, grade_map[grade_raw]))
 
 graph.serialize("out/joyo_kanji.ttl", format="turtle")
 print("Wrote out/joyo_kanji.ttl")
