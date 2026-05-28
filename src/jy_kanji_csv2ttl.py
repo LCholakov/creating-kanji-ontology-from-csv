@@ -21,9 +21,11 @@ graph.bind("rdfs", RDFS)
 #classes
 KanjiCharacter = JK.KanjiCharacter
 Radical = JK.Radical
+GradeLevel = JK.GradeLevel # what year in school it's taught or S if it's in secondary (highschool).
 
 graph.add((KanjiCharacter, RDF.type, OWL.Class))
 graph.add((Radical, RDF.type, OWL.Class))
+graph.add((GradeLevel, RDF.type, OWL.Class))
 
 
 # properties
@@ -32,12 +34,24 @@ stroke_count = JK.strokeCount
 yearAdded = JK.yearAdded
 hasRadical = JK.hasRadical
 
-# graph.add((hasOldForm, RDF.type, OWL.DatatypeProperty))
-# graph.add((stroke_count, RDF.type, OWL.DatatypeProperty))
-# graph.add((yearAdded, RDF.type, OWL.DatatypeProperty))
-# graph.add((hasRadical, RDF.type, OWL.DatatypeProperty))
+graph.add((hasOldForm, RDF.type, OWL.DatatypeProperty))
+graph.add((stroke_count, RDF.type, OWL.DatatypeProperty))
+graph.add((yearAdded, RDF.type, OWL.DatatypeProperty))
+graph.add((hasRadical, RDF.type, OWL.DatatypeProperty))
 
-# first load radicals and build a local dict to match radicals from kanji dataset to specific entity in radicals dataset
+# Make the grade level a separate class cuz it's not just a simple integer.
+grade_map = {}
+for i in range(1, 7):
+    uri = JK[f"Grade{i}"]
+    grade_map[str(i)] = uri
+    graph.add((uri, RDF.type, GradeLevel))
+    graph.add((uri, RDFS.label, Literal(f"Grade {i}")))
+secondary_uri = JK["Secondary"]
+grade_map["S"] = secondary_uri
+graph.add((secondary_uri, RDF.type, GradeLevel))
+graph.add((secondary_uri, RDFS.label, Literal("Secondary education")))
+
+# first convert radicals and build a local dict to match radicals from kanji dataset to specific entity in radicals dataset
 radical_uri_by_char = {}
 with open("data/kanji_radicals.csv", newline="", encoding="utf-8") as f:
     reader = csv.DictReader(f)
