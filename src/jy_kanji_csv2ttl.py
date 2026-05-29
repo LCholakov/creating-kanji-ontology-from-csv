@@ -1,7 +1,10 @@
+import os
 import csv
 from rdflib import Graph, Namespace, RDF, RDFS, Literal
 from rdflib.namespace import OWL
 from rdflib.namespace import XSD
+
+os.makedirs("out", exist_ok=True)
 
 JK  = Namespace("https://example.org/joyokanji#")
 
@@ -54,6 +57,7 @@ taughtInGrade = JK.taughtInGrade
 hasReading = JK.hasReading
 
 graph.add((hasRadical, RDF.type, OWL.ObjectProperty))
+graph.add((hasPhonetic, RDF.type, OWL.ObjectProperty))
 graph.add((taughtInGrade, RDF.type, OWL.ObjectProperty))
 graph.add((hasReading, RDF.type, OWL.ObjectProperty))
 
