@@ -22,6 +22,7 @@ graph.bind("owl", OWL)
 graph.bind("rdfs", RDFS)
 
 #classes
+Glyph = JK.Glyph
 KanjiCharacter = JK.KanjiCharacter
 Radical = JK.Radical
 Phonetic = JK.Phonetic
@@ -30,13 +31,22 @@ Reading = JK.Reading
 OnyomiReading = JK.OnYomiReading
 KunyomiReading = JK.KunYomiReading
 
+graph.add((Glyph, RDF.type, OWL.Class))
 graph.add((KanjiCharacter, RDF.type, OWL.Class))
+graph.add((KanjiCharacter, RDFS.subClassOf, Glyph))
+
 graph.add((Radical, RDF.type, OWL.Class))
+graph.add((Radical, RDFS.subClassOf, Glyph))
+
 graph.add((Phonetic, RDF.type, OWL.Class))
+graph.add((Phonetic, RDFS.subClassOf, Glyph))
+
 graph.add((GradeLevel, RDF.type, OWL.Class))
 graph.add((Reading, RDF.type, OWL.Class))
+
 graph.add((OnyomiReading, RDF.type, OWL.Class))
 graph.add((OnyomiReading, RDFS.subClassOf, Reading))
+
 graph.add((KunyomiReading, RDF.type, OWL.Class))
 graph.add((KunyomiReading, RDFS.subClassOf, Reading))
 
@@ -47,8 +57,16 @@ stroke_count = JK.strokeCount
 yearAdded = JK.yearAdded
 
 graph.add((hasOldForm, RDF.type, OWL.DatatypeProperty))
+graph.add((JK.hasOldForm, RDFS.domain, JK.KanjiCharacter))
+# graph.add((JK.hasOldForm, RDFS.range, XSD.string))
+
 graph.add((stroke_count, RDF.type, OWL.DatatypeProperty))
+graph.add((JK.strokeCount, RDFS.domain, JK.Glyph))
+# graph.add((JK.strokeCount, RDFS.range, XSD.integer))
+
 graph.add((yearAdded, RDF.type, OWL.DatatypeProperty))
+graph.add((JK.yearAdded, RDFS.domain, JK.KanjiCharacter))
+# graph.add((JK.yearAdded, RDFS.range, XSD.gYear))
 
 # object properties
 hasRadical = JK.hasRadical
@@ -65,6 +83,12 @@ graph.add((hasReading, RDF.type, OWL.ObjectProperty))
 # domains/ranges
 graph.add((JK.hasRadical, RDFS.domain, JK.KanjiCharacter))
 graph.add((JK.hasRadical, RDFS.range,  JK.Radical))
+
+graph.add((JK.hasReading, RDFS.domain, JK.KanjiCharacter))
+graph.add((JK.hasReading, RDFS.range,  JK.Reading))
+
+graph.add((JK.hasPhonetic, RDFS.domain, JK.KanjiCharacter))
+graph.add((JK.hasPhonetic, RDFS.range,  JK.Phonetic))
 
 graph.add((JK.taughtInGrade, RDFS.domain, JK.KanjiCharacter))
 graph.add((JK.taughtInGrade, RDFS.range,  JK.GradeLevel))
