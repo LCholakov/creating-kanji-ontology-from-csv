@@ -114,7 +114,7 @@ graph.add((secondary_uri, RDFS.label, Literal("Secondary education")))
 
 # first convert radicals and build a local dict to match radicals from kanji dataset to specific entity in radicals dataset
 radical_uri_by_char = {}
-with open("data/kanji_radicals.csv", newline="", encoding="utf-8") as f:
+with open("../data/kanji_radicals.csv", newline="", encoding="utf-8") as f:
     reader = csv.DictReader(f)
     for i, row in enumerate(reader):
         radical_char = normalize_cell(row.get("radical"))
@@ -132,7 +132,7 @@ with open("data/kanji_radicals.csv", newline="", encoding="utf-8") as f:
 
 
 # convert kanji character data from input dataset joyo_kanji.csv
-with open("data/joyo_kanji.csv", newline="", encoding="utf-8") as f:
+with open("../data/joyo_kanji.csv", newline="", encoding="utf-8") as f:
     reader = csv.DictReader(f)
     for i, row in enumerate(reader):
         # if i > 1000:
@@ -184,10 +184,10 @@ with open("data/joyo_kanji.csv", newline="", encoding="utf-8") as f:
         if grade_raw in grade_map:
             graph.add((instance, taughtInGrade, grade_map[grade_raw]))
 
-graph.serialize("out/joyo_kanji.ttl", format="turtle")
+graph.serialize("../out/joyo_kanji.ttl", format="turtle")
 
-ttl_data = graph.serialize(format="turtle")
-with open("out/joyo_kanji.txt", "w", encoding="utf-8", newline="\n") as f:
-    f.write(ttl_data)
+# ttl_data = graph.serialize(format="turtle")
+# with open("../out/joyo_kanji.txt", "w", encoding="utf-8", newline="\n") as f:
+#     f.write(ttl_data)
 
-print("Wrote out/joyo_kanji.ttl")
+print("Wrote ../out/joyo_kanji.ttl")
