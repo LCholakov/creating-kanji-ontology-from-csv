@@ -6,7 +6,8 @@ from rdflib.namespace import XSD
 
 os.makedirs("out", exist_ok=True)
 
-JK  = Namespace("https://example.org/joyokanji#")
+# JK  = Namespace("https://example.org/joyokanji#")
+JK  = Namespace("https://example.org/joyokanji/2026-06-03#")
 
 def unicode_uri(ch: str):
     # return JK[f"kanji_U{ord(ch):04X}"] 
@@ -16,10 +17,15 @@ def unicode_uri(ch: str):
 def normalize_cell(val):
     return (val or "").strip()
 
+
 graph = Graph()
 graph.bind("jk", JK)
 graph.bind("owl", OWL)
 graph.bind("rdfs", RDFS)
+
+ONTO = JK[""]
+graph.add((ONTO, RDF.type, OWL.Ontology))
+
 
 #classes
 Glyph = JK.Glyph
@@ -58,15 +64,15 @@ yearAdded = JK.yearAdded
 
 graph.add((hasOldForm, RDF.type, OWL.DatatypeProperty))
 graph.add((JK.hasOldForm, RDFS.domain, JK.KanjiCharacter))
-# graph.add((JK.hasOldForm, RDFS.range, XSD.string))
+graph.add((JK.hasOldForm, RDFS.range, XSD.string))
 
 graph.add((stroke_count, RDF.type, OWL.DatatypeProperty))
 graph.add((JK.strokeCount, RDFS.domain, JK.Glyph))
-# graph.add((JK.strokeCount, RDFS.range, XSD.integer))
+graph.add((JK.strokeCount, RDFS.range, XSD.integer))
 
 graph.add((yearAdded, RDF.type, OWL.DatatypeProperty))
 graph.add((JK.yearAdded, RDFS.domain, JK.KanjiCharacter))
-# graph.add((JK.yearAdded, RDFS.range, XSD.gYear))
+graph.add((JK.yearAdded, RDFS.range, XSD.gYear))
 
 # object properties
 hasRadical = JK.hasRadical
@@ -179,4 +185,9 @@ with open("data/joyo_kanji.csv", newline="", encoding="utf-8") as f:
             graph.add((instance, taughtInGrade, grade_map[grade_raw]))
 
 graph.serialize("out/joyo_kanji.ttl", format="turtle")
+
+ttl_data = graph.serialize(format="turtle")
+with open("out/joyo_kanji.txt", "w", encoding="utf-8", newline="\n") as f:
+    f.write(ttl_data)
+
 print("Wrote out/joyo_kanji.ttl")
