@@ -15,8 +15,7 @@ OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 os.makedirs("out", exist_ok=True)
 
-# JK  = Namespace("https://example.org/joyokanji#")
-JK  = Namespace("https://example.org/joyokanji/2026-06-03#")
+JK  = Namespace("https://example.org/joyokanji#")
 
 def unicode_uri(ch: str):
     # return JK[f"kanji_U{ord(ch):04X}"] 
