@@ -95,17 +95,28 @@ graph.add((hasReading, RDF.type, OWL.ObjectProperty))
 
 
 # domains/ranges
-graph.add((JK.hasRadical, RDFS.domain, JK.KanjiCharacter))
-graph.add((JK.hasRadical, RDFS.range,  JK.Radical))
+graph.add((hasRadical, RDFS.domain, KanjiCharacter))
+graph.add((hasRadical, RDFS.range,  Radical))
 
-graph.add((JK.hasReading, RDFS.domain, JK.KanjiCharacter))
-graph.add((JK.hasReading, RDFS.range,  JK.Reading))
+graph.add((hasReading, RDFS.domain, KanjiCharacter))
+graph.add((hasReading, RDFS.range,  Reading))
 
-graph.add((JK.hasPhonetic, RDFS.domain, JK.KanjiCharacter))
-graph.add((JK.hasPhonetic, RDFS.range,  JK.Phonetic))
+graph.add((hasPhonetic, RDFS.domain, KanjiCharacter))
+graph.add((hasPhonetic, RDFS.range,  Phonetic))
 
-graph.add((JK.taughtInGrade, RDFS.domain, JK.KanjiCharacter))
-graph.add((JK.taughtInGrade, RDFS.range,  JK.GradeLevel))
+graph.add((taughtInGrade, RDFS.domain, KanjiCharacter))
+graph.add((taughtInGrade, RDFS.range,  GradeLevel))
+
+# add func prop
+graph.add((stroke_count,  RDF.type, OWL.FunctionalProperty))
+graph.add((taughtInGrade, RDF.type, OWL.FunctionalProperty))
+
+# add inverse prop
+isRadicalOf = JK.isRadicalOf
+graph.add((isRadicalOf, RDF.type, OWL.ObjectProperty))
+graph.add((isRadicalOf, RDFS.domain, Radical))
+graph.add((isRadicalOf, RDFS.range,  KanjiCharacter))
+graph.add((hasRadical,  OWL.inverseOf, isRadicalOf))
 
 
 # Make the grade level a separate class cuz it's not just a simple integer.
