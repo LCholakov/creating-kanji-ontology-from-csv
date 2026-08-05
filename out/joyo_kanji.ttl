@@ -14556,7 +14556,8 @@ jk:hasOldForm a owl:DatatypeProperty ;
 
 jk:hasPhonetic a owl:ObjectProperty ;
     rdfs:domain jk:KanjiCharacter ;
-    rdfs:range jk:Phonetic .
+    rdfs:range jk:Phonetic ;
+    owl:inverseOf jk:isPhoneticOf .
 
 jk:hasRadical a owl:ObjectProperty ;
     rdfs:domain jk:KanjiCharacter ;
@@ -14580,9 +14581,6 @@ jk:taughtInGrade a owl:FunctionalProperty,
 jk:yearAdded a owl:DatatypeProperty ;
     rdfs:domain jk:KanjiCharacter ;
     rdfs:range xsd:gYear .
-
-jk:Phonetic a owl:Class ;
-    rdfs:subClassOf jk:Glyph .
 
 jk:U51E0 a jk:Radical ;
     rdfs:label "几" ;
@@ -14854,9 +14852,16 @@ jk:U9F8D a jk:Radical ;
 jk:U9F9C a jk:Radical ;
     rdfs:label "龜" .
 
+jk:isPhoneticOf a owl:ObjectProperty ;
+    rdfs:domain jk:Phonetic ;
+    rdfs:range jk:KanjiCharacter .
+
 jk:isRadicalOf a owl:ObjectProperty ;
     rdfs:domain jk:Radical ;
     rdfs:range jk:KanjiCharacter .
+
+jk:Phonetic a owl:Class ;
+    rdfs:subClassOf jk:Glyph .
 
 jk:U4E28 a jk:Radical ;
     rdfs:label "丨" ;

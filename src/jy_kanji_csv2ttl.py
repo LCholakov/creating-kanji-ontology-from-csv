@@ -118,6 +118,12 @@ graph.add((isRadicalOf, RDFS.domain, Radical))
 graph.add((isRadicalOf, RDFS.range,  KanjiCharacter))
 graph.add((hasRadical,  OWL.inverseOf, isRadicalOf))
 
+isPhoneticOf = JK.isPhoneticOf
+graph.add((isPhoneticOf, RDF.type, OWL.ObjectProperty))
+graph.add((isPhoneticOf, RDFS.domain, Phonetic))
+graph.add((isPhoneticOf, RDFS.range,  KanjiCharacter))
+graph.add((hasPhonetic,  OWL.inverseOf, isPhoneticOf))
+
 
 # Make the grade level a separate class cuz it's not just a simple integer.
 grade_map = {}
