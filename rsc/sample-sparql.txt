@@ -1,0 +1,28 @@
+# all jk classes and count individuals
+prefix jk: <https://example.org/joyokanji#>
+prefix owl: <http://www.w3.org/2002/07/owl#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+select ?class (count(distinct ?individual) as ?count)
+        where {
+        ?class a owl:Class.
+        FILTER(STRSTARTS((str(?class)),str(jk:)))
+        optional {?individual a ?class}
+		}
+		group by ?class
+        order by desc(?count)
+
+
+
+# kanji with 5 strokes taught in 5th grade 
+PREFIX jk:   <https://example.org/joyokanji#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?kanji ?label 
+        WHERE {
+        ?kanji a jk:KanjiCharacter;
+        rdfs:label ?label;
+        jk:strokeCount 5;
+        jk:taughtInGrade jk:Grade5.
+}
+ORDER BY ?label
